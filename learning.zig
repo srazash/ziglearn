@@ -31,7 +31,11 @@ pub fn main() void {
 
     c[2] = 99;
 
-    for (c) |e| {
-        std.debug.print("{d}\n", .{e});
+    for (c) |ele| {
+        std.debug.print("{d}\n", .{ele});
     }
+
+    // an array of 3 booleans with false as the sentinel value
+    const d = [3:false]bool{ false, true, false };
+    std.debug.print("{any}\n", .{std.mem.asBytes(&d).*});
 }
