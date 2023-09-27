@@ -19,4 +19,19 @@ pub fn main() void {
 
     std.debug.print("{s}'s power is {d}\n", .{ ryan.name, ryan.power });
     ryan.diagnose();
+
+    var a = [_]i32{ 1, 2, 3, 4, 5 }; // array
+    const b = a[1..4]; // pointer
+    var end: usize = 4; // end is not comptime know, so allows us to create a slice
+    const c = a[1..end]; // slice
+
+    std.debug.print("a is {any} = array\n", .{@TypeOf(a)});
+    std.debug.print("b is {any} = pointer\n", .{@TypeOf(b)});
+    std.debug.print("c is {any} = slice\n", .{@TypeOf(c)});
+
+    c[2] = 99;
+
+    for (c) |e| {
+        std.debug.print("{d}\n", .{e});
+    }
 }
