@@ -38,4 +38,12 @@ pub fn main() void {
     // an array of 3 booleans with false as the sentinel value
     const d = [3:false]bool{ false, true, false };
     std.debug.print("{any}\n", .{std.mem.asBytes(&d).*});
+
+    // comptime
+    // var i = 0; would throw a comptim error as the type is unknown
+    // const i = 0; would be fine as a const is know at comptime
+    const ck1 = 100; // compiler infers this is acomptime_int
+    const ck2 = 1.23; // compuiler infers this is a comptime_float
+    std.debug.print("{any} is a {any}.\n", .{ ck1, @TypeOf(ck1) });
+    std.debug.print("{any} is a {any}.\n", .{ ck2, @TypeOf(ck2) });
 }
