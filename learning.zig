@@ -119,5 +119,58 @@ pub fn main() void {
         else => "waaay too big!",
     };
 
+    // NOTE: switches are very powerful when paired with enums
+
     std.debug.print("(2) Switch input: {d}, Switch output: {s}\n", .{ swin2, swout2 });
+
+    // for loops are used to iterate over arrays, slices and ranges
+    const haystack = [_]u32{ 1, 5, 7, 11, 14 };
+    const needle: u32 = 7;
+    var needleFound: bool = false;
+
+    for (haystack) |value| {
+        if (value == needle) needleFound = true;
+    }
+
+    std.debug.print("The needle {s} been found.\n", .{if (needleFound == true) "has" else "has not"});
+
+    // for loops can work on multiple sequences at one as long as they are of equal length
+    const seq1 = [_]u32{ 1, 2, 3, 4, 5, 5, 7, 8 };
+    const seq2 = [_]u32{ 1, 2, 3, 4, 5, 6, 7, 8 };
+    var seqMatch: bool = true;
+
+    // we need to check the arrays are of equal length before entering the for loop or a runtime error
+    // may occur if they are not -- NO COMPTIME CHECK HERE! Ths is very similar to how std.mem.eql works
+    // checking length first, then performing a byte by byte comparison if the length does match
+    if (seq1.len != seq2.len) {
+        seqMatch = false;
+    } else {
+        for (seq1, seq2) |ele1, ele2| {
+            if (ele1 != ele2) seqMatch = false;
+        }
+    }
+
+    std.debug.print("The sequences {s} match.\n", .{if (seqMatch == true) "do" else "do not"});
+
+    // looping over a range
+    var total: usize = 0;
+
+    // for ranges (x..y) are upper bound exclusive
+    // switch ranges (a...b) are upper bound inclusive
+    // keep this difference in mind!
+    for (1..10) |i| {
+        total = total + i; // 1+2+3+4+5+6+7+8+9, 10 is the upper bound but excluded
+    }
+
+    std.debug.print("The total is {d}.\n", .{total});
+
+    // we can combine ranges with sequences to keep track of the index
+    // here the upper bound is inferred from the length of the sequence
+    for (haystack, 0..) |value, i| {
+        if (value == needle) {
+            std.debug.print("Needle found at index: {d}\n", .{i});
+            break;
+        }
+        std.debug.print("Checked index: {d}, needle not found\n", .{i});
+    }
 }
