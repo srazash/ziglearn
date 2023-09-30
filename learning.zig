@@ -159,7 +159,7 @@ pub fn main() void {
     // switch ranges (a...b) are upper bound inclusive
     // keep this difference in mind!
     for (1..10) |i| {
-        total = total + i; // 1+2+3+4+5+6+7+8+9, 10 is the upper bound but excluded
+        total += i; // 1+2+3+4+5+6+7+8+9, 10 is the upper bound but excluded
     }
 
     std.debug.print("The total is {d}.\n", .{total});
@@ -173,4 +173,27 @@ pub fn main() void {
         }
         std.debug.print("Checked index: {d}, needle not found\n", .{i});
     }
+
+    // *** WHILE LOOPS
+    // for loops in zig differ from their typical init>compare>step form in other languages, instead
+    // zig's while loops do provide functionality closer to this than it's for loops, as well as
+    // providing finer control over iteration
+    var i: usize = 0;
+    var escapeCount: usize = 0;
+
+    const src = "This \tstring contains\nthree\\3 escape sequences.";
+
+    while (i < src.len) {
+        if (src[i] == '\\') {
+            i += 2; // here we increment the index by 2 to include both backslashes
+            escapeCount += 1;
+        } else if (src[i] == '\t' or src[i] == '\n') {
+            i += 1;
+            escapeCount += 1;
+        } else {
+            i += 1;
+        }
+    }
+
+    std.debug.print("Text contains {d} escape sequences\n", .{escapeCount});
 }
