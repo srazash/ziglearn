@@ -234,4 +234,40 @@ pub fn main() void {
     };
 
     std.debug.print("{s}\n", .{teaOrCoffee});
+
+    // *** ENUMS
+    // enums are integers constants given a label, they are declared like a stuct
+
+    // could be `pub`
+    const Status = enum {
+        great,
+        ok,
+        mediocre,
+        bad,
+        awful,
+    };
+
+    const starWarsSequels = Status.awful; // type infered from enum
+
+    // use the `@tagName()` builtin to access the string representation of the enum value
+    std.debug.print("The Star Wars sequels were {s}\n", .{@tagName(starWarsSequels)});
+
+    // REFER TO `PUB CONST STAGE = ENUM {...}` BELOW!
+
+    const projectProgress = Stage.planning; // type infered from enum
+
+    std.debug.print("Is the project complete? : {any}\n", .{projectProgress.isComplete()});
 }
+
+// like structs, enums can contain other definitions including functions
+pub const Stage = enum {
+    planning,
+    starting,
+    in_progress,
+    complete,
+    issue,
+
+    fn isComplete(self: Stage) bool {
+        return self == Stage.complete;
+    }
+};
