@@ -178,22 +178,60 @@ pub fn main() void {
     // for loops in zig differ from their typical init>compare>step form in other languages, instead
     // zig's while loops do provide functionality closer to this than it's for loops, as well as
     // providing finer control over iteration
-    var i: usize = 0;
+    var idx: usize = 0;
     var escapeCount: usize = 0;
 
     const src = "This \tstring contains\nthree\\3 escape sequences.";
 
-    while (i < src.len) {
-        if (src[i] == '\\') {
-            i += 2; // here we increment the index by 2 to include both backslashes
+    while (idx < src.len) {
+        if (src[idx] == '\\') {
+            idx += 2; // here we increment the index by 2 to include both backslashes
             escapeCount += 1;
-        } else if (src[i] == '\t' or src[i] == '\n') {
-            i += 1;
+        } else if (src[idx] == '\t' or src[idx] == '\n') {
+            idx += 1;
             escapeCount += 1;
         } else {
-            i += 1;
+            idx += 1;
         }
     }
 
-    std.debug.print("Text contains {d} escape sequences\n", .{escapeCount});
+    std.debug.print("(WHILE) Text contains {d} escape sequences\n", .{escapeCount});
+
+    // zig's while loops can also have a continue expression, which functions like
+    // a for loop's step expressions in other languages, repeating the same example as above
+    idx = 0;
+    escapeCount = 0;
+
+    while (idx < src.len) : (idx += 1) {
+        if (src[idx] == '\\') {
+            idx += 1; // +1 here and +1 in the continue expression
+            escapeCount += 1;
+        } else if (src[idx] == '\t' or src[idx] == '\n') {
+            // the increment here is gone
+            escapeCount += 1;
+        } // wo no longer need the else
+    }
+
+    std.debug.print("(WHILE+CONT) Text contains {d} escape sequences\n", .{escapeCount});
+
+    // break and continue keywords can be used to break out of a loop or to continue
+    // to the next iteration, they can also be used with LABELS
+    outer: for (1..10) |i| { // `outer:` is the label, labels end with a colon
+        for (i..10) |j| {
+            if (i * j > (i + i + j + j)) continue :outer; // labels are called starting with a colon
+            std.debug.print("{d} + {d} >= {d} * {d}\n", .{ i + i, j + j, i, j });
+        }
+    }
+
+    // break can be used to return a value from a block when using a label
+    const teaVote: u32 = 7;
+    const coffeeVote: u32 = 8;
+
+    const teaOrCoffee = drink: {
+        if (teaVote > coffeeVote) break :drink "Time for tea!";
+        if (coffeeVote > teaVote) break :drink "It's coffee time!";
+        if (teaVote == coffeeVote) break :drink "It's a tie!";
+    };
+
+    std.debug.print("{s}\n", .{teaOrCoffee});
 }
