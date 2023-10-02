@@ -1,3 +1,4 @@
+//! MAIN
 // main.zig
 const std = @import("std");
 
@@ -5,6 +6,7 @@ const User = @import("models/user.zig").User;
 const MAX_POWER = @import("models/user.zig").MAX_POWER;
 
 const Enums = @import("enums.zig");
+const Unions = @import("unions.zig");
 
 pub fn main() void {
     // can be an anonymous struct because we provided the type
@@ -273,4 +275,20 @@ pub fn main() void {
 
     const myValI1 = [_]i1{ -1, 0 };
     for (myValI1) |v| std.debug.print("u1: {d}\n", .{v});
+
+    // tagged unions
+    // REFER TO `PUB CONST NUMBER = UNION {...}` IN UNIONS.ZIG!
+    const num = Unions.Number{ .int = 69 };
+    std.debug.print("Number is {any}.\n", .{num.int});
+
+    // a union can only have one field set at a time and attempting to access an unset field will cause an error
+    //std.debug.print("Number is {any}.\n", .{num.float}); <-- will cause an error
+
+    // our union has a `nan: void` field, because a void type is no value we would declare a nan value this way:
+    //const voidnum = Unions.Number{ .nan = {} };
+
+    // it can be a challenge to know which field is set this is where TAGGED UNIONS come in.
+    // a tagged union is an enum with a union (please refer to unions.zig)
+    const ts = Unions.Timestamp{ .unix = 1693278411 };
+    std.debug.print("{d}\n", .{ts.seconds()});
 }
