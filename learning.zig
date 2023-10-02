@@ -4,6 +4,8 @@ const std = @import("std");
 const User = @import("models/user.zig").User;
 const MAX_POWER = @import("models/user.zig").MAX_POWER;
 
+const Enums = @import("enums.zig");
+
 pub fn main() void {
     // can be an anonymous struct because we provided the type
     const goku: User = .{
@@ -238,7 +240,7 @@ pub fn main() void {
     // *** ENUMS
     // enums are integers constants given a label, they are declared like a stuct
 
-    // could be `pub`
+    // would need to be `pub` if in it's own file
     const Status = enum {
         great,
         ok,
@@ -252,22 +254,22 @@ pub fn main() void {
     // use the `@tagName()` builtin to access the string representation of the enum value
     std.debug.print("The Star Wars sequels were {s}\n", .{@tagName(starWarsSequels)});
 
-    // REFER TO `PUB CONST STAGE = ENUM {...}` BELOW!
+    // REFER TO `PUB CONST STAGE = ENUM {...}` IN ENUMS.ZIG!
 
-    const projectProgress = Stage.planning; // type infered from enum
+    const projectProgress = Enums.Stage.planning; // type infered from enum
 
     std.debug.print("Is the project complete? : {any}\n", .{projectProgress.isComplete()});
+
+    // *** TEST
+    const myValU2 = [_]u2{ 0, 1, 2, 3 };
+    for (myValU2) |v| std.debug.print("u2: {d}\n", .{v});
+
+    const myValU1 = [_]u1{ 0, 1 };
+    for (myValU1) |v| std.debug.print("u1: {d}\n", .{v});
+
+    const myValI2 = [_]i2{ -2, -1, 0, 1 };
+    for (myValI2) |v| std.debug.print("u1: {d}\n", .{v});
+
+    const myValI1 = [_]i1{ -1, 0 };
+    for (myValI1) |v| std.debug.print("u1: {d}\n", .{v});
 }
-
-// like structs, enums can contain other definitions including functions
-pub const Stage = enum {
-    planning,
-    starting,
-    in_progress,
-    complete,
-    issue,
-
-    fn isComplete(self: Stage) bool {
-        return self == Stage.complete;
-    }
-};
