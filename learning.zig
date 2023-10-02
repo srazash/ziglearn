@@ -260,7 +260,8 @@ pub fn main() void {
 
     std.debug.print("Is the project complete? : {any}\n", .{projectProgress.isComplete()});
 
-    // *** TEST
+    // *** ARBITRARY INTEGER SIZE TEST
+    // it's not positive vs negative, it's signed vs unsigned, and zero is unsigned!
     const myValU2 = [_]u2{ 0, 1, 2, 3 };
     for (myValU2) |v| std.debug.print("u2: {d}\n", .{v});
 
