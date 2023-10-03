@@ -306,9 +306,9 @@ pub fn main() void {
     // BUT this will cause an error if the value is null
 
     // one way to guard against this is with an if statement
-    if (optstr) |ch| {
+    if (optstr) |osch| {
         // the string is not null, so we can safely print it
-        std.debug.print("optstr is not null: {s}\n", .{ch});
+        std.debug.print("optstr is not null: {s}\n", .{osch});
     } else {
         // the string is null, so we can handle it safely
         std.debug.print("optstr is null\n", .{});
@@ -320,4 +320,12 @@ pub fn main() void {
 
     std.debug.print("{s}\n", .{unwstr});
     // optional types can also be used in a while loop to create iterators
+
+    // *** UNDEFINED
+    // undefined can be seen as a placeholder when declaring a value, these differ from a null that is nothing
+    // undefined on the otherhand takes the required memory, but leaves it blank until initialised:
+    var myUndefArray: [25]u8 = undefined; // <--- variable is created in memory
+    std.crypto.random.bytes(&myUndefArray); // <--- data is written to that memory address (noted the `&` indicating an address)
+
+    std.debug.print("{any}\n", .{myUndefArray});
 }
