@@ -291,4 +291,33 @@ pub fn main() void {
     // a tagged union is an enum with a union (please refer to unions.zig)
     const ts = Unions.Timestamp{ .unix = 1693278411 };
     std.debug.print("{d}\n", .{ts.seconds()});
+
+    // *** OPTIONAL TYPES
+    // any type can be declared as an option type by prepending it with `?`
+    //var optstr: []const u8 = null; <-- this will cause an error
+    // we have to explicitely declare the type in order to make it optional, otherwise it'll
+    var optstr: ?[]const u8 = null;
+    optstr = "pspspspspsps";
+
+    std.debug.print("{?s}\n", .{optstr}); // <--- we also need to indicate that the string could be null
+
+    // we can also access the value behind an optional this way
+    //std.debug.print("{s}\n", .{optstr.?});
+    // BUT this will cause an error if the value is null
+
+    // one way to guard against this is with an if statement
+    if (optstr) |ch| {
+        // the string is not null, so we can safely print it
+        std.debug.print("optstr is not null: {s}\n", .{ch});
+    } else {
+        // the string is null, so we can handle it safely
+        std.debug.print("optstr is null\n", .{});
+    }
+
+    // we could also use `orelse` to unwrap the optional, and define a default value of behaviour if it is a null
+    const nulstr: ?[]const u8 = null;
+    const unwstr = nulstr orelse "I was a null :("; // <--- the orelse can or-else into a code block for more complex logic too
+
+    std.debug.print("{s}\n", .{unwstr});
+    // optional types can also be used in a while loop to create iterators
 }
