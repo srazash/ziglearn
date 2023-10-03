@@ -7,6 +7,7 @@ const MAX_POWER = @import("models/user.zig").MAX_POWER;
 
 const Enums = @import("enums.zig");
 const Unions = @import("unions.zig");
+const Errors = @import("errors.zig");
 
 pub fn main() void {
     // can be an anonymous struct because we provided the type
@@ -295,7 +296,7 @@ pub fn main() void {
     // *** OPTIONAL TYPES
     // any type can be declared as an option type by prepending it with `?`
     //var optstr: []const u8 = null; <-- this will cause an error
-    // we have to explicitely declare the type in order to make it optional, otherwise it'll
+    // we have to explicitely declare the type in order to make it optional, otherwise it'll error
     var optstr: ?[]const u8 = null;
     optstr = "pspspspspsps";
 
@@ -316,7 +317,7 @@ pub fn main() void {
 
     // we could also use `orelse` to unwrap the optional, and define a default value of behaviour if it is a null
     const nulstr: ?[]const u8 = null;
-    const unwstr = nulstr orelse "I was a null :("; // <--- the orelse can or-else into a code block for more complex logic too
+    const unwstr = nulstr orelse "I was a null :("; // <--- the `orelse` can or-else into a code block for more complex logic too
 
     std.debug.print("{s}\n", .{unwstr});
     // optional types can also be used in a while loop to create iterators
@@ -328,4 +329,27 @@ pub fn main() void {
     std.crypto.random.bytes(&myUndefArray); // <--- data is written to that memory address (noted the `&` indicating an address)
 
     std.debug.print("{any}\n", .{myUndefArray});
+
+    // *** ERRORS
+    // please refer to ERRORS.ZIG
+    //try Errors.RtnErr(); <--- we could use the `try` keyword and prepend main()'s return type with `!` to handle the error
+
+    // but a more graceful way to handle the error would be to `catch` it using an if statement:
+    Errors.RtnErr() catch |err| {
+        if (err == Errors.OpenError.AccessDenied) {
+            std.debug.print("Error: Access Denied!\n", .{});
+        } else if (err == Errors.OpenError.NotFound) {
+            std.debug.print("Error: Not Found!\n", .{});
+        }
+    };
+
+    // or using a switch statement:
+    Errors.RtnErr() catch |err| switch (err) {
+        Errors.OpenError.AccessDenied => std.debug.print("Error: Access Denied!\n", .{}),
+        Errors.OpenError.NotFound => std.debug.print("Error: Not Found!\n", .{}),
+    };
+
+    // we could also simply return the error:
+    //Errors.RtnErr() catch |err| return err;
+    // which is what `try Errors.RtnErr();` does as well
 }
