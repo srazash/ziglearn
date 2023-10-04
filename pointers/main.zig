@@ -48,6 +48,8 @@ pub fn main() void {
 // this example we want to pass by reference to ensure our data is mutated, as we intended
 fn levelUp(user: *User) void {
     user.power += 1;
+    std.debug.print("{*}\n{*}\n", .{ &user, user }); // show the addresses of &user and user
+    std.debug.print("{any}\n{any}\n", .{ @TypeOf(&user), @TypeOf(user) }); // pointer and pointer to a pointer
 }
 
 const User = struct {
