@@ -9,7 +9,7 @@ const Enums = @import("enums.zig");
 const Unions = @import("unions.zig");
 const Errors = @import("errors.zig");
 
-pub fn main() void {
+pub fn main() !void {
     // can be an anonymous struct because we provided the type
     const goku: User = .{
         .power = 9001,
@@ -352,4 +352,9 @@ pub fn main() void {
     // we could also simply return the error:
     //Errors.RtnErr() catch |err| return err;
     // which is what `try Errors.RtnErr();` does as well
+
+    // ERROR UNION OPTIONAL TYPE example
+    // the optimal way to use this type of function is to use `try` to unwrap the error and `orelse` to unwrap the optional
+    const reoval = (try Errors.RtnErrOpt(0)) orelse "I was a null :(";
+    std.debug.print("{s}\n", .{reoval});
 }

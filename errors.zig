@@ -26,3 +26,16 @@ pub fn RtnErr() OpenError!void {
 // these two approaches are not equivalent, for example, implicit error sets need to use the `anyerror` type
 // explicit error sets make code self-documenting, which can be a benefit when reviewing code
 // both approches have their advantages and disadvantages, and can be mixed
+
+// it's not unusual for functions to return an ERROR UNION OPTIONAL TYPE
+const OptErrors = error{
+    Not0Or1,
+};
+
+pub fn RtnErrOpt(in: u8) !?[]const u8 {
+    switch (in) {
+        0 => return null,
+        1 => return "something",
+        else => return OptErrors.Not0Or1,
+    }
+}
