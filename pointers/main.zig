@@ -41,6 +41,11 @@ pub fn main() void {
 }
 
 // levelUp() now takes a POINTER
+// constant parameters helps prevent unitended behaviour, by default we PASS BY VALUE (COPY)
+// but in some cases we want to PASS BY REFERENCE (POINT TO A MEMORY ADDRESS)
+// typically it is cheaper to pass by value for samller types and more expensive for larger types
+// so it may become desirable to pass by reference for the larger ones, but in some cases, such as
+// this example we want to pass by reference to ensure our data is mutated, as we intended
 fn levelUp(user: *User) void {
     user.power += 1;
 }
