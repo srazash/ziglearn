@@ -23,6 +23,21 @@ pub fn main() void {
     // because we want the levelUp() function to affect data in memory we need to pass it a pointer
     levelUp(&user); // we pass levelUp() the address of our user
     std.debug.print("User {d} has a power level of {d}.\n", .{ user.id, user.power });
+
+    // for methods, this works exactly the same
+    var ryan = BetterUser{
+        .name = "Ryan",
+        .id = 2,
+        .power = 8999,
+    };
+
+    // we can call them like a normal function
+    BetterUser.betterLevelUp(&ryan);
+
+    // but we can also call them through our new user
+    // Zig's compiler will infer that a pointer to our user needs to be passed in
+    ryan.betterLevelUp();
+    std.debug.print("{s} (ID: {d}) has a power level of {d}.\n", .{ ryan.name, ryan.id, ryan.power });
 }
 
 // levelUp() now takes a POINTER
@@ -33,4 +48,14 @@ fn levelUp(user: *User) void {
 const User = struct {
     id: u64,
     power: i32,
+};
+
+const BetterUser = struct {
+    name: []const u8,
+    id: u64,
+    power: i32,
+
+    fn betterLevelUp(user: *BetterUser) void {
+        user.power += 1;
+    }
 };
