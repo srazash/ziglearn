@@ -55,6 +55,22 @@ pub fn main() void {
 
     // this worked despite passing in goku as a value (therefore creating a copy) because the data we changed wasn't
     // a copy, but a copy of the address in goku that points to mutable data in our vat array
+
+    // recrusive structures
+    // we added an optional EvenBetterUser inside EvenBetterUser, called master
+    const obi_wan = EvenBettererUser{
+        .id = 4,
+        .power = 9001,
+        .master = null, // obi_wan has no master
+    };
+
+    const anakin = EvenBettererUser{
+        .id = 5,
+        .power = 9000,
+        .master = &obi_wan, // anakin's master is obi_wan, passed in as a pointer
+    };
+
+    std.debug.print("{any}\n{any}\n", .{ obi_wan, anakin });
 }
 
 // levelUp() now takes a POINTER
@@ -88,6 +104,15 @@ const EvenBetterUser = struct {
     name: []u8,
     id: u64,
     power: i32,
+};
+
+const EvenBettererUser = struct {
+    id: u64,
+    power: i32,
+    master: ?*const EvenBettererUser, // optional EvenBetterUser
+    // changed from ?const User ---> ?*const User, otherwise the compiler would error
+    // as the number of recursions is unknown at comptime, a pointer's size is always
+    // know because it is always the same size (usize ---> 8 bytes on a 64-bit platform)
 };
 
 fn mutateName(user: EvenBetterUser) void {
