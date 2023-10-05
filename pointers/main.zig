@@ -38,6 +38,23 @@ pub fn main() void {
     // Zig's compiler will infer that a pointer to our user needs to be passed in
     ryan.betterLevelUp();
     std.debug.print("{s} (ID: {d}) has a power level of {d}.\n", .{ ryan.name, ryan.id, ryan.power });
+
+    // nested pointers
+    // shallow copies created when a type is passed by value will give a function a copy of values, but pointers
+    // (such as a slice... or a string) are copies of the original pointer - therefore are pointers to the original
+    // data in memory, and not a copy
+    // strings are typically immutable but as an example we can get around this:
+    var new_name = [4]u8{ 'G', 'o', 'k', 'u' }; // var array, mutable
+    var goku = EvenBetterUser{
+        .id = 3,
+        .power = 100,
+        .name = new_name[0..], // name is a slice of `new_name`
+    };
+    mutateName(goku); // goku passed as value
+    std.debug.print("{s}\n", .{goku.name}); // but goku is changed to go!u
+
+    // this worked despite passing in goku as a value (therefore creating a copy) because the data we changed wasn't
+    // a copy, but a copy of the address in goku that points to mutable data in our vat array
 }
 
 // levelUp() now takes a POINTER
@@ -66,3 +83,13 @@ const BetterUser = struct {
         user.power += 1;
     }
 };
+
+const EvenBetterUser = struct {
+    name: []u8,
+    id: u64,
+    power: i32,
+};
+
+fn mutateName(user: EvenBetterUser) void {
+    user.name[2] = '!';
+}
