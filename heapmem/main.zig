@@ -45,6 +45,24 @@ pub fn main() !void {
     }
 
     std.debug.print("{any}\n", .{arr});
+
+    // alloc and free are used for slices, if we want to manage memory for single items we use:
+    // CREATE & DESTROY
+    var user = try allocator.create(User); // <--- we create a User on the heap
+    defer allocator.destroy(user); // <--- destroy user once we exit scope to free the memory
+
+    user.id = 1;
+    user.power = 100;
+
+    levelUp(user);
+    std.debug.print("User {d} has power of {d}\n", .{ user.id, user.power });
+
+    // the create function takes a single parameter - a type, T: User, and returns a pointer to user
+    // again we defer the destroy function, and pass it user as the parameter, so that we know our memory will be freed upon scope exit
+
+    var user2 = User.init(allocator, 2, 9001);
+    defer allocator.destroy(user);
+    std.debug.print("User {d} has power of {d}\n", .{ user2.id, user2.power });
 }
 
 fn getPrng(at_most: u8, arr_init: bool) !u8 {
@@ -54,3 +72,21 @@ fn getPrng(at_most: u8, arr_init: bool) !u8 {
     if (arr_init) return random.random().uintAtMost(u8, 5) + 5;
     return random.random().uintAtMost(u8, at_most);
 }
+
+fn levelUp(user: *User) void {
+    user.power += 1;
+}
+
+pub const User = struct {
+    id: u64,
+    power: i32,
+
+    fn init(allocator: std.mem.Allocator, id: u64, power: i32) !*User {
+        var user = try allocator.create(User);
+        user.* = .{
+            .id = id,
+            .power = power,
+        };
+        return user;
+    }
+};
