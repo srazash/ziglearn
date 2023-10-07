@@ -58,11 +58,17 @@ pub fn main() !void {
     std.debug.print("User {d} has power of {d}\n", .{ user.id, user.power });
 
     // the create function takes a single parameter - a type, T: User, and returns a pointer to user
-    // again we defer the destroy function, and pass it user as the parameter, so that we know our memory will be freed upon scope exit
+    // again we defer the destroy function, and pass it user as the parameter, so that we know our
+    // memory will be freed upon scope exit
 
-    var user2 = User.init(allocator, 2, 9001);
-    defer allocator.destroy(user);
-    std.debug.print("User {d} has power of {d}\n", .{ user2.id, user2.power });
+    var list = try IntList.init(allocator);
+    defer list.deinit();
+
+    for (0..10) |i| {
+        try list.add(@intCast(i + 1));
+    }
+
+    std.debug.print("{any}\n", .{list.items[0..list.pos]});
 }
 
 fn getPrng(at_most: u8, arr_init: bool) !u8 {
@@ -77,16 +83,64 @@ fn levelUp(user: *User) void {
     user.power += 1;
 }
 
-pub const User = struct {
+const User = struct {
     id: u64,
     power: i32,
+};
 
-    fn init(allocator: std.mem.Allocator, id: u64, power: i32) !*User {
-        var user = try allocator.create(User);
-        user.* = .{
-            .id = id,
-            .power = power,
+pub const IntList = struct {
+    pos: usize,
+    items: []i64,
+    allocator: Allocator,
+
+    fn init(allocator: Allocator) !IntList {
+        return .{
+            .pos = 0,
+            .allocator = allocator,
+            .items = try allocator.alloc(i64, 4),
         };
-        return user;
+    }
+
+    fn deinit(self: IntList) void {
+        self.allocator.free(self.items);
+    }
+
+    fn add(self: *IntList, value: i64) !void {
+        const pos = self.pos;
+        const len = self.items.len;
+
+        if (pos == len) {
+            // we've run out of space
+            // create a new slice that's twice as large
+            var larger = try self.allocator.alloc(i64, len * 2);
+
+            // copy the items we previously added to our new space
+            @memcpy(larger[0..len], self.items);
+            // freeing memory now data copied to larger
+            self.allocator.free(self.items);
+
+            self.items = larger;
+        }
+
+        self.items[pos] = value;
+        self.pos = pos + 1;
     }
 };
+
+const testing = std.testing;
+test "IntList: add" {
+    var list = try IntList.init(testing.allocator);
+    defer list.deinit();
+
+    for (0..5) |i| {
+        try list.add(@intCast(i + 10));
+    }
+
+    try testing.expectEqual(@as(usize, 5), list.pos);
+
+    try testing.expectEqual(@as(i64, 10), list.items[0]);
+    try testing.expectEqual(@as(i64, 11), list.items[1]);
+    try testing.expectEqual(@as(i64, 12), list.items[2]);
+    try testing.expectEqual(@as(i64, 13), list.items[3]);
+    try testing.expectEqual(@as(i64, 14), list.items[4]);
+}
