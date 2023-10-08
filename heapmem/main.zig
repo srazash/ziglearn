@@ -144,3 +144,13 @@ test "IntList: add" {
     try testing.expectEqual(@as(i64, 13), list.items[3]);
     try testing.expectEqual(@as(i64, 14), list.items[4]);
 }
+
+// ArenaAllocator - allows multiple allocations, but these can't be deallocated
+// individually, they are all deallocated at the same time when the arena is
+// released from memory. These are good for parsers and other processes where
+// an unknown amount of data will be processed and memory released when processing
+// completes.
+
+// FixedBufferAllocator - is well suited for processes where a fixed size buffer
+// is needed, this is typically a fixed sized []u8, so can be good for working
+// with strings of fixed sizes. The major benefit of the FBA is it's performance.
