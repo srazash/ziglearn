@@ -358,3 +358,7 @@ pub fn main() !void {
     const reoval = (try Errors.RtnErrOpt(0)) orelse "I was a null :(";
     std.debug.print("{s}\n", .{reoval});
 }
+
+test "dummy build test" {
+    try std.testing.expectEqual(true, true);
+}
