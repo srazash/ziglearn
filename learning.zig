@@ -1,6 +1,7 @@
 //! MAIN
 // main.zig
 const std = @import("std");
+const calc = @import("calc");
 
 const User = @import("models/user.zig").User;
 const MAX_POWER = @import("models/user.zig").MAX_POWER;
@@ -10,6 +11,9 @@ const Unions = @import("unions.zig");
 const Errors = @import("errors.zig");
 
 pub fn main() !void {
+    const sum = calc.add(100, 200);
+    std.debug.print("calc.add says 100 + 200 = {any}\n", .{sum});
+
     // can be an anonymous struct because we provided the type
     const goku: User = .{
         .power = 9001,
