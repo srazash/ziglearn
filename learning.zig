@@ -11,7 +11,7 @@ const Unions = @import("unions.zig");
 const Errors = @import("errors.zig");
 
 pub fn main() !void {
-    const add_sum = calc.add.add(100, 200);
+    const add_sum = calc.add(100, 200);
     std.debug.print("calc.add says 100 + 200 = {d}\n", .{add_sum});
 
     // can be an anonymous struct because we provided the type

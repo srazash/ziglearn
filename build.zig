@@ -6,9 +6,14 @@ pub fn build(b: *std.Build) !void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
-    const calc_module = b.addModule("calc", .{
-        .source_file = .{ .path = "./calc/calc.zig" },
-    });
+    // local dependency
+    //const calc_module = b.addModule("calc", .{
+    //    .source_file = .{ .path = "./calc/calc.zig" },
+    //});
+
+    // remote dependency
+    const calc_dep = b.dependency("calc", .{ .target = target, .optimize = optimize });
+    const calc_module = calc_dep.module("calc");
 
     // build (install) executable
     const exe = b.addExecutable(.{

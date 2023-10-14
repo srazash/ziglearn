@@ -4,6 +4,10 @@ pub fn build(b: *std.Build) !void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
+    _ = b.addModule("calc", .{
+        .source_file = .{ .path = "calc.zig" },
+    });
+
     const tests = b.addTest(.{
         .target = target,
         .optimize = optimize,
